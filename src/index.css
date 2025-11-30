@@ -1,4 +1,6 @@
-/* ============== GLOBAL RESET ============== */
+/* ================================
+   Global Reset
+================================ */
 *,
 *::before,
 *::after {
@@ -10,59 +12,251 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
-  overflow-x: hidden; /* 横にはみ出し防止 */
+  overflow-x: hidden;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
 }
 
-/* ============== PC ============== */
+/* ================================
+   App Layout
+================================ */
 .app {
   width: 100%;
-  max-width: 100%;
-  padding: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 24px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
+.app-header {
+  text-align: center;
+}
+
+.app-title {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.app-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* ================================
+   Columns
+================================ */
 .columns {
   display: flex;
-  flex-wrap: wrap;  /* ← 横に溢れたら折り返す！ */
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
   width: 100%;
 }
 
+/* ================================
+   Task Column
+================================ */
 .task-column {
-  flex: 1 1 300px; /* 300pxより狭くなったら自動で折れる */
-  min-width: 0;    /* はみ出し抑制 */
+  flex: 1 1 320px;
+  min-width: 0;
+  background: #020617;
+  border-radius: 18px;
+  padding: 14px 14px 18px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-/* カードが横に伸びないための保険 */
+/* カラムのヘッダーの色分け */
+.task-column-header {
+  border-radius: 12px;
+  padding: 8px 10px;
+  background: #020617;
+  border: 1px solid #1f2937;
+  display: flex;
+  align-items: center;
+}
+
+.task-column-header--today {
+  border-left: 4px solid #38bdf8;
+}
+
+.task-column-header--thisWeek {
+  border-left: 4px solid #a855f7;
+}
+
+.task-column-header--someday {
+  border-left: 4px solid #f97316;
+}
+
+.task-column-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ================================
+   Input Area
+================================ */
+.task-input {
+  display: flex;
+  gap: 8px;
+}
+
+.task-input input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #1f2937;
+  background: #020617;
+  color: #e5e7eb;
+  font-size: 14px;
+}
+
+.task-input input::placeholder {
+  color: #6b7280;
+}
+
+.task-input input:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35);
+}
+
+.task-input button {
+  min-width: 72px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease,
+    filter 0.12s ease;
+}
+
+.task-input button:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
+}
+
+/* ================================
+   Task List & Card
+================================ */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-empty {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+
 .task-card {
   width: 100%;
   max-width: 100%;
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  padding: 10px 10px;
+  background: radial-gradient(circle at top left, #0f172a, #020617);
+  border-radius: 12px;
+  border: 1px solid #1f2937;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.8);
+  transform: translateY(0);
+  transition: transform 0.16s ease, box-shadow 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 26px rgba(15, 23, 42, 0.9);
+  border-color: #38bdf8;
+}
+
+.task-card-main {
+  flex: 1;
+}
+
+.task-card-text {
+  margin: 0;
+  font-size: 14px;
+  color: #e5e7eb;
   word-break: break-word;
 }
 
-/* ============== MOBILE (768px以下) ============== */
+.task-card-delete {
+  align-self: center;
+  border-radius: 999px;
+  border: none;
+  padding: 6px 10px;
+  background: #111827;
+  color: #9ca3af;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s ease, color 0.12s ease,
+    transform 0.12s ease;
+}
+
+.task-card-delete:hover {
+  background: #b91c1c;
+  color: #fee2e2;
+  transform: translateY(1px);
+}
+
+/* ================================
+   Mobile (スマホ)
+================================ */
 @media (max-width: 768px) {
   .app {
-    padding: 12px;
+    padding: 16px 10px 28px;
+  }
+
+  .app-title {
+    font-size: 22px;
+  }
+
+  .app-subtitle {
+    font-size: 12px;
   }
 
   .columns {
-    flex-direction: column; /* 1カラム強制 */
-    gap: 12px;
+    flex-direction: column;
   }
 
-  .task-column,
-  .task-card {
-    width: 100%;
-    max-width: 100%;
+  .task-column {
+    flex: 1 1 auto;
   }
 
-  .task-input,
-  .task-input input,
+  .task-input {
+    flex-direction: column;
+  }
+
   .task-input button {
     width: 100%;
+    padding: 10px 0;
+    min-height: 40px;
   }
 
-  body {
-    font-size: 15px;
+  .task-card {
+    padding: 10px 10px;
+  }
+
+  .task-card-text {
+    font-size: 13px;
   }
 }
