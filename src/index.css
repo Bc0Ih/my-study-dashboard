@@ -1,80 +1,52 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ================================
+   グローバル初期化
+================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
+html,
 body {
   margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* 右はみ出し防止 */
+}
+
+/* ================================
+   レイアウト調整（PC）
+================================ */
+.app {
+  width: 100%;
+  max-width: 100%;
+  padding: 20px;
+}
+
+.columns {
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  gap: 20px;
+  width: 100%;
+  max-width: 100%;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.task-column {
+  flex: 1;
+  min-width: 0; /* カラム自体が横にはみ出すのを防止 */
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
-/* 画面幅768px以下（スマホ表示用） */
+/* ================================
+   スマホ 最適化（768px以下）
+================================ */
 @media (max-width: 768px) {
   .app {
     padding: 12px;
   }
 
+  /* カラムを縦並びにしてスマホ向けに */
   .columns {
-    display: flex;
     flex-direction: column;
     gap: 12px;
   }
@@ -83,11 +55,11 @@ button:focus-visible {
     width: 100%;
   }
 
+  /* 入力欄とボタンを指で押しやすい幅に */
   .task-input,
   .task-input input,
   .task-input button {
     width: 100%;
-    box-sizing: border-box;
   }
 
   .task-card {
@@ -96,14 +68,6 @@ button:focus-visible {
   }
 
   body {
-    font-size: 14px;
+    font-size: 15px; /* スマホ視認性UP */
   }
 }
-
-/* 横スクロール防止（必須） */
-html, body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
-
