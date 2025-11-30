@@ -1,6 +1,4 @@
-/* ================================
-   グローバル初期化
-================================ */
+/* ============== GLOBAL RESET ============== */
 *,
 *::before,
 *::after {
@@ -12,13 +10,10 @@ body {
   margin: 0;
   padding: 0;
   width: 100%;
-  max-width: 100%;
-  overflow-x: hidden; /* 右はみ出し防止 */
+  overflow-x: hidden; /* 横にはみ出し防止 */
 }
 
-/* ================================
-   レイアウト調整（PC）
-================================ */
+/* ============== PC ============== */
 .app {
   width: 100%;
   max-width: 100%;
@@ -27,47 +22,47 @@ body {
 
 .columns {
   display: flex;
+  flex-wrap: wrap;  /* ← 横に溢れたら折り返す！ */
   gap: 20px;
   width: 100%;
-  max-width: 100%;
 }
 
 .task-column {
-  flex: 1;
-  min-width: 0; /* カラム自体が横にはみ出すのを防止 */
+  flex: 1 1 300px; /* 300pxより狭くなったら自動で折れる */
+  min-width: 0;    /* はみ出し抑制 */
 }
 
-/* ================================
-   スマホ 最適化（768px以下）
-================================ */
+/* カードが横に伸びないための保険 */
+.task-card {
+  width: 100%;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+/* ============== MOBILE (768px以下) ============== */
 @media (max-width: 768px) {
   .app {
     padding: 12px;
   }
 
-  /* カラムを縦並びにしてスマホ向けに */
   .columns {
-    flex-direction: column;
+    flex-direction: column; /* 1カラム強制 */
     gap: 12px;
   }
 
-  .task-column {
+  .task-column,
+  .task-card {
     width: 100%;
+    max-width: 100%;
   }
 
-  /* 入力欄とボタンを指で押しやすい幅に */
   .task-input,
   .task-input input,
   .task-input button {
     width: 100%;
   }
 
-  .task-card {
-    padding: 12px;
-    border-radius: 8px;
-  }
-
   body {
-    font-size: 15px; /* スマホ視認性UP */
+    font-size: 15px;
   }
 }
