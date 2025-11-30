@@ -1,163 +1,157 @@
+// App.jsx
 import React, { useState, useEffect } from "react";
 import "./index.css";
 
-const COLUMN_KEYS = ["today", "thisWeek", "someday"];
-
-const COLUMN_META = {
-  today: { title: "今日やる" },
-  thisWeek: { title: "今週やる" },
-  someday: { title: "いつかやる" },
-};
-
-const STORAGE_KEY = "my-study-dashboard-tasks";
-
 function App() {
-  const [tasks, setTasks] = useState({
-    today: [],
-    thisWeek: [],
-    someday: [],
-  });
+  // ⏰ 時計
+  const [time, setTime] = useState("");
 
-  const [input, setInput] = useState({
-    today: "",
-    thisWeek: "",
-    someday: "",
-  });
-
-  // 🔹 初回：localStorage から読み込み
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        setTasks({
-          today: parsed.today || [],
-          thisWeek: parsed.thisWeek || [],
-          someday: parsed.someday || [],
-        });
-      }
-    } catch (e) {
-      console.error("Failed to load tasks", e);
-    }
-  }, []);
-
-  // 🔹 更新のたびに保存
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-    } catch (e) {
-      console.error("Failed to save tasks", e);
-    }
-  }, [tasks]);
-
-  const handleChangeInput = (columnKey, value) => {
-    setInput((prev) => ({ ...prev, [columnKey]: value }));
-  };
-
-  const handleAddTask = (columnKey) => {
-    const text = input[columnKey].trim();
-    if (!text) return;
-
-    const newTask = {
-      id: Date.now(),
-      text,
-      createdAt: new Date().toISOString(),
+    const updateTime = () => {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, "0");
+      const m = String(now.getMinutes()).padStart(2, "0");
+      const s = String(now.getSeconds()).padStart(2, "0");
+      setTime(`${h}:${m}:${s}`);
     };
 
-    setTasks((prev) => ({
-      ...prev,
-      [columnKey]: [newTask, ...prev[columnKey]],
-    }));
+    updateTime();
+    const id = setInterval(updateTime, 1000);
+    return () => clearInterval(id);
+  }, []);
 
-    setInput((prev) => ({ ...prev, [columnKey]: "" }));
+  // 📁 カテゴリ管理
+  const [categories, setCategories] = useState([]);
+  const [newCategory, setNewCategory] = useState("");
+
+  const handleAddCategory = (e) => {
+    e.preventDefault();
+    const name = newCategory.trim();
+    if (!name) return;
+    if (categories.includes(name)) return;
+
+    setCategories((prev) => [...prev, name]);
+    setNewCategory("");
+    if (!selectedCategory) {
+      setSelectedCategory(name);
+    }
   };
 
-  const handleDeleteTask = (columnKey, id) => {
-    setTasks((prev) => ({
-      ...prev,
-      [columnKey]: prev[columnKey].filter((t) => t.id !== id),
-    }));
+  // ✏️ 学習記録
+  const [records, setRecords] = useState([]);
+  const [newRecordText, setNewRecordText] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const handleAddRecord = (e) => {
+    e.preventDefault();
+    if (!newRecordText.trim() || !selectedCategory) return;
+
+    const now = new Date();
+    const record = {
+      id: now.getTime(),
+      text: newRecordText.trim(),
+      category: selectedCategory,
+      createdAt: now,
+    };
+
+    setRecords((prev) => [...prev, record]);
+    setNewRecordText("");
+  };
+
+  const formatRecordTime = (date) => {
+    return `${date.getMonth() + 1}/${date.getDate()} ${String(
+      date.getHours()
+    ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
   };
 
   return (
     <div className="app">
+      {/* ヘッダー */}
       <header className="app-header">
         <h1 className="app-title">My Study Dashboard</h1>
-        <p className="app-subtitle">
-          今日・今週・いつかやることを、スマホからでもサクッと管理。
-        </p>
+        <div className="clock-pill">{time}</div>
       </header>
 
-      <div className="columns">
-        {COLUMN_KEYS.map((key) => (
-          <TaskColumn
-            key={key}
-            columnKey={key}
-            title={COLUMN_META[key].title}
-            tasks={tasks[key]}
-            inputValue={input[key]}
-            onChangeInput={handleChangeInput}
-            onAddTask={handleAddTask}
-            onDeleteTask={handleDeleteTask}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
+      {/* 📁 カテゴリ管理 */}
+      <section className="section">
+        <h2 className="section-title">📁 カテゴリ管理</h2>
 
-function TaskColumn({
-  columnKey,
-  title,
-  tasks,
-  inputValue,
-  onChangeInput,
-  onAddTask,
-  onDeleteTask,
-}) {
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      onAddTask(columnKey);
-    }
-  };
-
-  return (
-    <section className="task-column">
-      <div className={`task-column-header task-column-header--${columnKey}`}>
-        <h2 className="task-column-title">{title}</h2>
-      </div>
-
-      <div className="task-input">
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => onChangeInput(columnKey, e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="タスクを入力して Enter or 追加"
-        />
-        <button onClick={() => onAddTask(columnKey)}>追加</button>
-      </div>
-
-      <div className="task-list">
-        {tasks.length === 0 && (
-          <p className="task-empty">まだタスクはありません。</p>
-        )}
-
-        {tasks.map((task) => (
-          <div className="task-card" key={task.id}>
-            <div className="task-card-main">
-              <p className="task-card-text">{task.text}</p>
-            </div>
-            <button
-              className="task-card-delete"
-              onClick={() => onDeleteTask(columnKey, task.id)}
-            >
-              削除
+        <div className="card">
+          <form className="card-form" onSubmit={handleAddCategory}>
+            <label className="card-label">カテゴリを追加</label>
+            <input
+              type="text"
+              className="text-input"
+              placeholder="例：英語 / 読書 / プログラミング"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+            />
+            <button type="submit" className="primary-button">
+              ＋ 追加
             </button>
-          </div>
-        ))}
-      </div>
-    </section>
+          </form>
+        </div>
+      </section>
+
+      {/* ✏️ 学習を記録 */}
+      <section className="section">
+        <h2 className="section-title">✏️ 学習を記録</h2>
+
+        <div className="card">
+          <form className="card-form" onSubmit={handleAddRecord}>
+            <label className="card-label">学習内容</label>
+            <input
+              type="text"
+              className="text-input"
+              placeholder="例：Progate 30分 / 読書20P"
+              value={newRecordText}
+              onChange={(e) => setNewRecordText(e.target.value)}
+            />
+
+            <label className="card-label">カテゴリ</label>
+            <select
+              className="select-input"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="">カテゴリを選択</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+
+            <button type="submit" className="primary-button">
+              ＋ 記録追加
+            </button>
+          </form>
+        </div>
+      </section>
+
+      {/* 📘 記録一覧 */}
+      <section className="section">
+        <h2 className="section-title">
+          📘 記録一覧（{records.length}件）
+        </h2>
+
+        {records.length === 0 ? (
+          <p className="empty-text">まだ記録がありません。</p>
+        ) : (
+          <ul className="record-list">
+            {records.map((record) => (
+              <li className="record-item" key={record.id}>
+                <span className="record-category-tag">{record.category}</span>
+                <span className="record-text">{record.text}</span>
+                <span className="record-time">
+                  {formatRecordTime(record.createdAt)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
   );
 }
 
