@@ -66,3 +66,44 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* 画面幅768px以下（スマホ表示用） */
+@media (max-width: 768px) {
+  .app {
+    padding: 12px;
+  }
+
+  .columns {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .task-column {
+    width: 100%;
+  }
+
+  .task-input,
+  .task-input input,
+  .task-input button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .task-card {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  body {
+    font-size: 14px;
+  }
+}
+
+/* 横スクロール防止（必須） */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
